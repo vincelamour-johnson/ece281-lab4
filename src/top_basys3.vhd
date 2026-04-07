@@ -87,7 +87,7 @@ begin
 	);
 	
 	uut_inst2 : elevator_controller_fsm port map (
-		i_clk     => w_clk2,
+		i_clk     => w_clk,
 		i_reset   => w_elev_reset,
 		is_stopped    => sw(14),
 		go_up_down => sw(15),
@@ -99,9 +99,18 @@ begin
        o_seg_n => seg
 	);
 	
+	
+	clkdiv_inst2 : clock_divider 		--instantiation of clock_divider to take 
+        generic map ( k_DIV => 500000 ) -- 2 Hz clock from 100 MHz
+        port map (						  
+            i_clk   => clk,
+            i_reset => w_clk_reset,
+            o_clk   => w_clk2
+        );  
+        
 	uut_inst3 : TDM4 
 	port map ( 
-       i_clk   => clk,
+       i_clk   => w_clk2,
        i_reset => main_reset,
        i_D3    => "1111",
        i_D2    => w_floor1,
@@ -120,13 +129,7 @@ begin
             o_clk   => w_clk
         );
         
-    clkdiv_inst2 : clock_divider 		--instantiation of clock_divider to take 
-        generic map ( k_DIV => 25000000 ) -- 2 Hz clock from 100 MHz
-        port map (						  
-            i_clk   => clk,
-            i_reset => w_clk_reset,
-            o_clk   => w_clk2
-        );       
+         
 	
 	-- CONCURRENT STATEMENTS ----------------------------
 	an  <= f_sel_n;
